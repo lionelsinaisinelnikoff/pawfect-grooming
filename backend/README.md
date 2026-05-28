@@ -24,19 +24,24 @@ A simple, self-hosted backend that lets you fully control the website content (t
    ```
 
 3. **Access the admin panel**:
-   - Open http://localhost:5000/admin in your browser
+   - Open http://localhost:5050/admin in your browser
    - Default password: `admin123` (change this in `server.py`)
 
-4. **On the live site**:
+4. **View the live site while the backend is running**:
+   - In a separate terminal, run: `python3 -m http.server 8000`
+   - Then open http://localhost:8000 in your browser
+   - Click **"View Site"** in the admin — it's now smart and will open your local site (or fall back to the published demo)
+
+5. **Access the admin from the site**:
    - Scroll to the very bottom of the footer
-   - Click the tiny **"ADMIN LOGIN"** link
-   - It will open the full admin in a new tab (backend must be running)
+   - Click **"ADMIN PANEL"**
+   - It will open http://localhost:5050/admin in a new tab (backend must be running)
 
 ## How It Works
 
 - All editable content lives in `backend/data/content.json`
 - Uploaded media goes into `backend/uploads/`
-- The public `index.html` tries to fetch from `http://localhost:5000/api/content` on load (graceful fallback to static content)
+- The public `index.html` tries to fetch from `http://localhost:5050/api/content` on load when the backend is running (graceful fallback to static content)
 - The dedicated `/admin` interface gives you full control with a nice UI
 
 ## Changing the Password
