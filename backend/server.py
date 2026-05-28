@@ -389,7 +389,7 @@ ADMIN_HTML = """<!DOCTYPE html>
                 </div>
             </div>
             <div class="flex items-center gap-x-3">
-                <a href="/" class="px-4 py-2 text-sm font-medium hover:bg-white rounded-2xl border border-[#EDE4DB]">View Live Site</a>
+                <a href="../index.html" target="_blank" class="px-4 py-2 text-sm font-medium hover:bg-white rounded-2xl border border-[#EDE4DB]">View Site</a>
                 <button onclick="logout()" 
                         class="px-5 py-2.5 bg-[#2F3A3A] hover:bg-black text-white text-sm font-semibold rounded-2xl flex items-center gap-x-2">
                     <i class="fa-solid fa-sign-out-alt"></i>
