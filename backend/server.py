@@ -28,10 +28,33 @@ BASE_DIR = Path(__file__).parent.resolve()
 DATA_DIR = BASE_DIR / "data"
 UPLOAD_DIR = BASE_DIR / "uploads"
 CONTENT_FILE = DATA_DIR / "content.json"
+BOOKINGS_FILE = DATA_DIR / "bookings.json"
 
 # Change this password on first run (or set ADMIN_PASSWORD env var)
 DEFAULT_ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin123")
 SECRET_KEY = os.environ.get("SECRET_KEY", secrets.token_hex(32))
+
+# Stripe configuration (set these in your environment for live or test)
+# Support multiple common env var names for convenience
+STRIPE_SECRET_KEY = (
+    os.environ.get("STRIPE_SECRET_KEY")
+    or os.environ.get("stripe_secret_key")
+    or os.environ.get("STRIPE_SECRET")
+    or os.environ.get("stripeSecretKey")
+    or ""
+)
+STRIPE_WEBHOOK_SECRET = (
+    os.environ.get("STRIPE_WEBHOOK_SECRET")
+    or os.environ.get("stripe_webhook_secret")
+    or ""
+)
+
+try:
+    import stripe
+    if STRIPE_SECRET_KEY:
+        stripe.api_key = STRIPE_SECRET_KEY
+except ImportError:
+    stripe = None
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp", "mp4", "mov", "webm"}
 
@@ -59,6 +82,76 @@ def save_content(data):
     with open(CONTENT_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     return data
+
+
+# --- Stripe / Booking Helpers ---
+
+def get_service_price_cents(service_name: str) -> int:
+    """Look up price from content.json services. Falls back to sensible defaults."""
+    content = load_content()
+    services = content.get("services", [])
+
+    for svc in services:
+        if svc.get("name") == service_name:
+            price = svc.get("priceCents")
+            if isinstance(price, int) and price > 0:
+                return price
+
+    # Fallback defaults (in cents)
+    defaults = {
+        "Signature Full Groom": 12500,
+        "Bath & Brush Out": 5500,
+        "Haircut & Styling": 7500,
+        "Pawdicure & Nail Trim": 3500,
+        "Dental Care Treatment": 2800,
+        "De-Shedding Spa Treatment": 6500,
+        "Custom / Multiple Services": 5000,  # $50 deposit for customs
+    }
+    return defaults.get(service_name, 7500)
+
+
+def load_bookings():
+    if BOOKINGS_FILE.exists():
+        try:
+            with open(BOOKINGS_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return []
+    return []
+
+
+def save_booking(booking: dict):
+    bookings = load_bookings()
+    booking["id"] = f"bk_{int(datetime.utcnow().timestamp())}"
+    booking["createdAt"] = datetime.utcnow().isoformat() + "Z"
+    bookings.insert(0, booking)  # newest first
+    # Keep only last 200
+    if len(bookings) > 200:
+        bookings = bookings[:200]
+    with open(BOOKINGS_FILE, "w", encoding="utf-8") as f:
+        json.dump(bookings, f, indent=2)
+    return booking
+
+
+def record_paid_booking(session_data: dict):
+    """Store a successfully paid booking from Stripe metadata."""
+    meta = session_data.get("metadata", {})
+    booking = {
+        "status": "paid",
+        "stripeSessionId": session_data.get("id"),
+        "amountTotal": session_data.get("amount_total"),
+        "customerEmail": session_data.get("customer_email") or meta.get("ownerEmail"),
+        "ownerName": meta.get("ownerName"),
+        "petName": meta.get("petName"),
+        "service": meta.get("service"),
+        "preferredDate": meta.get("preferredDate"),
+        "preferredTime": meta.get("preferredTime"),
+        "phone": meta.get("ownerPhone"),
+        "notes": meta.get("notes"),
+        "petType": meta.get("petType"),
+        "petBreed": meta.get("petBreed"),
+    }
+    return save_booking(booking)
 
 
 # --- Media Library Helpers ---
@@ -141,6 +234,108 @@ def get_content():
     """Public endpoint - used by the live website"""
     content = load_content()
     return jsonify(content)
+
+
+# ---------------- STRIPE BOOKING PAYMENTS ----------------
+
+@app.route("/api/create-checkout-session", methods=["POST"])
+def create_checkout_session():
+    """Create a Stripe Checkout Session for a grooming booking."""
+    if not stripe or not STRIPE_SECRET_KEY:
+        return jsonify({
+            "error": "Stripe is not configured on this server. Set STRIPE_SECRET_KEY environment variable."
+        }), 503
+
+    data = request.get_json() or {}
+
+    service = data.get("service", "").strip()
+    owner_name = data.get("ownerName", "").strip()
+    owner_email = data.get("ownerEmail", "").strip()
+    owner_phone = data.get("ownerPhone", "").strip()
+    pet_name = data.get("petName", "").strip()
+    pet_type = data.get("petType", "").strip()
+    pet_breed = data.get("petBreed", "").strip()
+    preferred_date = data.get("preferredDate", "").strip()
+    preferred_time = data.get("preferredTime", "").strip()
+    notes = data.get("notes", "").strip()
+
+    if not service or not owner_email or not owner_name or not pet_name:
+        return jsonify({"error": "Missing required fields (service, ownerName, ownerEmail, petName)"}), 400
+
+    amount_cents = get_service_price_cents(service)
+
+    # Build a clean success/cancel URL (works for local dev + production)
+    # In production you would use your real domain.
+    origin = request.headers.get("Origin") or "http://localhost:8000"
+    success_url = f"{origin}/?paid=success&session_id={{CHECKOUT_SESSION_ID}}"
+    cancel_url = f"{origin}/?paid=cancel"
+
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            mode="payment",
+            line_items=[{
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {
+                        "name": f"Pawfect Grooming — {service}",
+                        "description": f"Appointment for {pet_name} ({pet_type}) on {preferred_date} at {preferred_time}",
+                        "metadata": {"service": service}
+                    },
+                    "unit_amount": amount_cents,
+                },
+                "quantity": 1,
+            }],
+            customer_email=owner_email if owner_email else None,
+            metadata={
+                "ownerName": owner_name,
+                "ownerEmail": owner_email,
+                "ownerPhone": owner_phone,
+                "petName": pet_name,
+                "petType": pet_type,
+                "petBreed": pet_breed,
+                "service": service,
+                "preferredDate": preferred_date,
+                "preferredTime": preferred_time,
+                "notes": notes[:500] if notes else "",
+            },
+            success_url=success_url,
+            cancel_url=cancel_url,
+        )
+        return jsonify({"url": session.url, "sessionId": session.id})
+    except Exception as e:
+        return jsonify({"error": f"Stripe error: {str(e)}"}), 500
+
+
+@app.route("/api/bookings", methods=["GET"])
+def list_bookings():
+    """Public for now (in real app you'd protect this). Returns recent paid bookings."""
+    bookings = load_bookings()
+    return jsonify(bookings[:50])
+
+
+@app.route("/api/webhook/stripe", methods=["POST"])
+def stripe_webhook():
+    """Handle Stripe webhook events (recommended for production fulfillment)."""
+    if not stripe or not STRIPE_WEBHOOK_SECRET:
+        return jsonify({"error": "Webhook not configured"}), 503
+
+    payload = request.data
+    sig_header = request.headers.get("Stripe-Signature")
+
+    try:
+        event = stripe.Webhook.construct_event(payload, sig_header, STRIPE_WEBHOOK_SECRET)
+    except Exception as e:
+        return jsonify({"error": f"Invalid signature: {str(e)}"}), 400
+
+    if event["type"] == "checkout.session.completed":
+        session_obj = event["data"]["object"]
+        try:
+            record_paid_booking(session_obj)
+        except Exception as e:
+            print("Failed to record booking:", e)
+
+    return jsonify({"received": True})
 
 
 # ---------------- AUTH ----------------
@@ -515,6 +710,9 @@ ADMIN_HTML = """<!DOCTYPE html>
                     <button onclick="showTab('media')" class="tab-btn px-6 py-3 font-medium text-[#A67C6D]" data-tab="media">
                         <i class="fa-solid fa-photo-video mr-1"></i> Media Library
                     </button>
+                    <button onclick="showTab('bookings')" class="tab-btn px-6 py-3 font-medium" data-tab="bookings">
+                        <i class="fa-solid fa-credit-card mr-1"></i> Bookings
+                    </button>
                 </div>
 
                 <div id="tab-services">
@@ -566,6 +764,20 @@ ADMIN_HTML = """<!DOCTYPE html>
                     </div>
                     <div id="media-library-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
                     <p class="text-xs text-[#2F3A3A]/60 mt-4">Central asset pool. All files in <code>backend/uploads/</code> appear here automatically. Use this to assign images/videos to Hero, Team, Services, etc. The separate "Public Gallery" tab controls what visitors see on the live site.</p>
+                </div>
+
+                <!-- BOOKINGS TAB (Stripe) -->
+                <div id="tab-bookings" class="hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-semibold">Recent Paid Bookings</h3>
+                        <button onclick="loadBookings()" 
+                                class="text-sm px-4 py-2 bg-white border border-[#EDE4DB] hover:bg-[#EDE4DB] rounded-2xl flex items-center gap-x-2">
+                            <i class="fa-solid fa-sync"></i>
+                            <span>Refresh</span>
+                        </button>
+                    </div>
+                    <div id="bookings-list" class="space-y-3 text-sm"></div>
+                    <p class="text-xs text-[#2F3A3A]/60 mt-4">Bookings appear here automatically after successful Stripe payments (via webhook or success redirect). Works best when STRIPE_WEBHOOK_SECRET is configured.</p>
                 </div>
             </div>
 
@@ -846,6 +1058,50 @@ ADMIN_HTML = """<!DOCTYPE html>
             `).join('');
         }
 
+        async function loadBookings() {
+            const container = document.getElementById('bookings-list');
+            container.innerHTML = '<div class="text-[#A67C6D] py-4">Loading bookings from backend...</div>';
+
+            try {
+                const res = await fetch(`${API}/bookings`, { credentials: 'include' });
+                const bookings = await res.json();
+
+                if (!bookings || bookings.length === 0) {
+                    container.innerHTML = `
+                        <div class="border border-[#EDE4DB] rounded-2xl p-8 text-center bg-white">
+                            <i class="fa-solid fa-credit-card text-3xl text-[#A67C6D]/40 mb-3"></i>
+                            <div class="font-medium">No paid bookings yet</div>
+                            <div class="text-xs text-[#2F3A3A]/60 mt-1">Successful Stripe payments will appear here automatically.</div>
+                        </div>`;
+                    return;
+                }
+
+                container.innerHTML = bookings.map(b => {
+                    const amount = b.amountTotal ? (b.amountTotal / 100).toFixed(2) : '—';
+                    const date = b.preferredDate || '—';
+                    const time = b.preferredTime || '';
+                    return `
+                        <div class="border border-[#EDE4DB] rounded-2xl p-4 bg-white">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <div class="font-semibold">${b.petName || 'Pet'} — ${b.service || 'Service'}</div>
+                                    <div class="text-[#A67C6D] text-xs mt-0.5">${b.ownerName || ''} • ${b.customerEmail || ''}</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-semibold text-[#A67C6D]">$${amount}</div>
+                                    <div class="text-[10px] text-[#2F3A3A]/50">${date} ${time}</div>
+                                </div>
+                            </div>
+                            ${b.notes ? `<div class="mt-2 text-xs bg-[#FDF8F4] p-2 rounded-xl text-[#2F3A3A]/70">${b.notes}</div>` : ''}
+                            <div class="mt-2 text-[10px] text-[#2F3A3A]/40">Status: <span class="font-medium text-emerald-600">${b.status || 'paid'}</span> • ${b.createdAt ? new Date(b.createdAt).toLocaleString() : ''}</div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                container.innerHTML = `<div class="text-red-600 text-sm">Could not load bookings. Is the backend running?</div>`;
+            }
+        }
+
         function showTab(tab) {
             document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add('hidden'));
             document.getElementById('tab-' + tab).classList.remove('hidden');
@@ -859,6 +1115,9 @@ ADMIN_HTML = """<!DOCTYPE html>
 
             if (tab === 'media') {
                 renderMediaLibrary();
+            }
+            if (tab === 'bookings') {
+                loadBookings();
             }
         }
 
@@ -1173,6 +1432,8 @@ if __name__ == "__main__":
     print("🐾 Pawfect Grooming Content Backend")
     print("-----------------------------------")
     print(f"Admin password: {DEFAULT_ADMIN_PASSWORD}")
+    stripe_status = "ENABLED ✓" if (stripe and STRIPE_SECRET_KEY) else "DISABLED (set STRIPE_SECRET_KEY)"
+    print(f"Stripe payments: {stripe_status}")
     print("Visit: http://localhost:5050/admin")
     print("Press CTRL+C to stop\n")
     app.run(host="0.0.0.0", port=5050, debug=True)

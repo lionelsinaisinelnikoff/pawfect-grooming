@@ -815,7 +815,7 @@
                             <span>SUBMIT REQUEST</span>
                             <i class="fa-solid fa-calendar-check"></i>
                         </button>
-                        <p class="text-center md:text-left text-xs text-[#2F3A3A]/60 mt-3.5">We will call or email you within 2 hours to confirm.</p>
+                        <p class="text-center md:text-left text-xs text-[#2F3A3A]/60 mt-3.5">Secure your spot with a card. We'll call within 2 hours to confirm the exact time.</p>
                     </div>
                 </form>
             </div>
@@ -1198,10 +1198,9 @@
             if (dd < 10) dd = '0' + dd;
             dateInput.min = `${yyyy}-${mm}-${dd}`;
             
-            form.addEventListener('submit', function(e) {
+            form.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                // Basic validation is handled by HTML5 required attributes
                 const submitBtn = form.querySelector('button[type="submit"]');
                 const originalText = submitBtn.innerHTML;
                 
@@ -1209,22 +1208,71 @@
                 submitBtn.innerHTML = `
                     <span class="flex items-center gap-x-2">
                         <i class="fa-solid fa-spinner fa-spin"></i> 
-                        <span>SENDING REQUEST...</span>
+                        <span>CONNECTING TO PAYMENT...</span>
                     </span>
                 `;
                 
-                // Simulate network request
-                setTimeout(() => {
+                // Collect form data
+                const formData = {
+                    ownerName: document.getElementById('owner-name').value.trim(),
+                    ownerEmail: document.getElementById('owner-email').value.trim(),
+                    ownerPhone: document.getElementById('owner-phone').value.trim(),
+                    petName: document.getElementById('pet-name').value.trim(),
+                    petType: document.getElementById('pet-type').value,
+                    petBreed: document.getElementById('pet-breed').value.trim(),
+                    service: document.getElementById('service-select').value,
+                    preferredDate: document.getElementById('preferred-date').value,
+                    preferredTime: document.getElementById('preferred-time').value,
+                    notes: document.getElementById('special-requests').value.trim()
+                };
+                
+                const BACKEND = "http://localhost:5050";
+                
+                try {
+                    const res = await fetch(`${BACKEND}/api/create-checkout-session`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    const json = await res.json();
+                    
+                    if (res.ok && json.url) {
+                        // Success — redirect to Stripe Checkout
+                        window.location.href = json.url;
+                        return;
+                    } else {
+                        // Backend responded but with error (e.g. Stripe not configured)
+                        throw new Error(json.error || "Could not start payment");
+                    }
+                } catch (err) {
+                    // Backend not running or Stripe not configured — graceful fallback to old behavior
+                    console.warn("[Pawfect] Payment backend unavailable, using demo mode:", err.message);
+                    
+                    await new Promise(r => setTimeout(r, 900));
+                    
                     form.reset();
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = originalText;
                     
-                    // Close mobile menu if open
                     document.getElementById('mobile-menu').classList.add('hidden');
                     
-                    // Show success modal
+                    // Show a slightly different message for demo mode
+                    const modal = document.getElementById('success-modal');
+                    modal.querySelector('h3').textContent = 'Request Received (Demo)';
+                    modal.querySelector('p').innerHTML = 'In production this would redirect you to Stripe to securely pay for your appointment.<br><br>Thank you!';
                     showSuccessModal();
-                }, 1250);
+                    
+                    // Restore original modal text after close
+                    setTimeout(() => {
+                        const origH = 'Request Received!';
+                        const origP = 'We\'ll call or email you within 2 hours to confirm your appointment. We can\'t wait to pamper your pet!';
+                        const h3 = modal.querySelector('h3');
+                        const p = modal.querySelector('p');
+                        if (h3) h3.textContent = origH;
+                        if (p) p.innerHTML = origP;
+                    }, 400);
+                }
             });
         }
 
@@ -1515,6 +1563,41 @@
 
             // Try loading dynamic content after initial load
             setTimeout(tryLoadFromBackend, 800);
+
+            // =============================================
+            // STRIPE PAYMENT RETURN HANDLING
+            // Detects ?paid=success or ?paid=cancel from Stripe redirects
+            // =============================================
+            (function handleStripeReturn() {
+                const params = new URLSearchParams(window.location.search);
+                const paid = params.get('paid');
+                const sessionId = params.get('session_id');
+
+                if (!paid) return;
+
+                // Clean the URL
+                const cleanUrl = window.location.pathname + window.location.hash;
+                window.history.replaceState({}, document.title, cleanUrl);
+
+                const modal = document.getElementById('success-modal');
+                if (!modal) return;
+
+                if (paid === 'success') {
+                    modal.querySelector('h3').textContent = 'Payment Successful! 🎉';
+                    const p = modal.querySelector('p');
+                    p.innerHTML = `Your appointment is secured.<br><br>
+                        <strong>Session ID:</strong> <span class="font-mono text-xs">${sessionId ? sessionId.slice(0, 24) + '…' : '—'}</span><br><br>
+                        We'll email you a confirmation within a few minutes and call to finalize the exact time.`;
+                    
+                    // Optional: you could fetch booking details from backend here in the future
+                } else if (paid === 'cancel') {
+                    modal.querySelector('h3').textContent = 'Payment Cancelled';
+                    const p = modal.querySelector('p');
+                    p.textContent = 'No worries — your card was not charged. Feel free to try again or give us a call.';
+                }
+
+                showSuccessModal();
+            })();
         }
 
         // Boot the site

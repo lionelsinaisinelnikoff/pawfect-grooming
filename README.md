@@ -85,6 +85,44 @@ The project includes a complete local admin system:
 
 See `backend/README.md` for full instructions.
 
+## 💳 Stripe Payments (New!)
+
+The booking form now supports **real payments** via Stripe Checkout.
+
+### Quick Setup (Local)
+
+1. **Install the Stripe Python library**
+   ```bash
+   cd backend
+   pip3 install stripe
+   ```
+
+2. **Get your Stripe test keys**
+   - Go to https://dashboard.stripe.com/test/apikeys
+   - Copy **Publishable key** (starts with `pk_test_...`) and **Secret key** (`sk_test_...`)
+
+3. **Run the backend with Stripe enabled**
+   ```bash
+   STRIPE_SECRET_KEY=sk_test_xxxxxxxxxxxxxxxx  python3 backend/server.py
+   ```
+
+4. **Test the flow**
+   - Open the site (`python3 -m http.server 8000`)
+   - Click any "SELECT SERVICE" button
+   - Fill out the booking form and submit
+   - You'll be redirected to Stripe's secure checkout (use test card `4242 4242 4242 4242`)
+
+5. **(Optional but recommended)** Set up the webhook for reliable booking recording:
+   - In Stripe Dashboard → Developers → Webhooks → Add endpoint: `http://localhost:5050/api/webhook/stripe`
+   - Copy the **Signing secret** and run with:
+     ```bash
+     STRIPE_SECRET_KEY=sk_test_... STRIPE_WEBHOOK_SECRET=whsec_... python3 backend/server.py
+     ```
+
+After a successful payment, bookings appear in the **Admin Panel → Bookings** tab.
+
+For production, set the same environment variables on your server and update the success/cancel URLs in `server.py` if needed.
+
 ## 🔄 Legacy: Google Sheets CMS (Optional)
 
 The site ships static by default for speed, simplicity, and perfect Lighthouse scores. However, a complete **Google Sheets CMS kit** is included in the `cms/` folder.

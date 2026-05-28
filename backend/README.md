@@ -64,4 +64,25 @@ This is a local/development tool. For real production use you would want:
 
 For now it gives you complete control over your beautiful static site with almost zero friction.
 
+## 💳 Stripe Integration
+
+The backend now powers real payments for the booking form.
+
+**Required environment variables for payments:**
+
+| Variable                | Required | Description                              |
+|-------------------------|----------|------------------------------------------|
+| `STRIPE_SECRET_KEY`     | Yes      | Your Stripe secret key (`sk_test_...` or `sk_live_...`) |
+| `STRIPE_WEBHOOK_SECRET` | Optional | Webhook signing secret for `/api/webhook/stripe` |
+
+**Endpoints added:**
+
+- `POST /api/create-checkout-session` — Creates a Stripe Checkout Session. Frontend calls this with booking details.
+- `GET /api/bookings` — Returns recent paid bookings (shown in admin).
+- `POST /api/webhook/stripe` — Stripe webhook handler (strongly recommended).
+
+**Test card (Stripe test mode):** `4242 4242 4242 4242` + any future expiry + any CVC.
+
+Bookings are stored in `data/bookings.json` and visible in the admin under the new **Bookings** tab.
+
 Enjoy managing your content the easy way. 🐾
