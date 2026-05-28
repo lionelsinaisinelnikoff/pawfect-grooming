@@ -907,10 +907,11 @@
             <div>© 2025 Pawfect Grooming Co. All rights reserved. Made with love in Boulder, Colorado.</div>
             <div class="text-xs mt-1 text-[#EDE4DB]/50">Handcrafted grooming for the pets that mean the world to you.</div>
             <div class="mt-3">
-                <button onclick="openAdminLogin()" 
-                        class="text-[10px] tracking-[1px] text-[#EDE4DB]/40 hover:text-[#A67C6D] transition-colors">
-                    ADMIN LOGIN
-                </button>
+                <a href="http://localhost:5050/admin" target="_blank" 
+                   class="text-[10px] tracking-[1px] text-[#EDE4DB]/40 hover:text-[#A67C6D] transition-colors"
+                   title="Open Admin Panel (run 'python3 backend/server.py' first)">
+                    ADMIN PANEL
+                </a>
             </div>
         </div>
     </footer>
@@ -960,33 +961,7 @@
         </div>
     </div>
 
-    <!-- ADMIN LOGIN MODAL -->
-    <div id="admin-login-modal" onclick="if (event.target.id === 'admin-login-modal') closeAdminLogin()" class="hidden fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-6">
-        <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-3xl max-w-sm w-full p-8 shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <div class="font-semibold text-2xl heading-serif tracking-tight">Admin Access</div>
-                    <div class="text-xs text-[#A67C6D]">Pawfect Grooming CMS</div>
-                </div>
-                <button onclick="closeAdminLogin()" class="text-2xl text-[#2F3A3A]/40 hover:text-[#2F3A3A]">×</button>
-            </div>
 
-            <input id="admin-password" type="password" placeholder="Enter admin password" 
-                   class="w-full border border-[#EDE4DB] bg-[#FDF8F4] rounded-2xl px-5 h-14 text-base focus:border-[#A67C6D] outline-none"
-                   onkeyup="if (event.key === 'Enter') attemptAdminLogin()">
-            
-            <button onclick="attemptAdminLogin()" 
-                    class="mt-4 w-full h-14 bg-[#A67C6D] hover:bg-[#8F685C] active:bg-[#8F685C] text-white font-semibold rounded-2xl">
-                Sign In to Admin Panel
-            </button>
-            
-            <p id="admin-login-error" class="text-red-600 text-xs mt-3 text-center hidden">Invalid password</p>
-            
-            <div class="text-center text-[10px] text-[#2F3A3A]/50 mt-5">
-                Backend must be running: <code class="font-mono">python3 backend/server.py</code>
-            </div>
-        </div>
-    </div>
 
     <script>
         // Tailwind configuration
@@ -1503,49 +1478,6 @@
             // BACKEND CMS INTEGRATION (optional)
             // =============================================
             const BACKEND_URL = "http://localhost:5050";
-
-            function openAdminLogin() {
-                const modal = document.getElementById('admin-login-modal');
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                setTimeout(() => {
-                    document.getElementById('admin-password').focus();
-                }, 100);
-            }
-
-            function closeAdminLogin() {
-                const modal = document.getElementById('admin-login-modal');
-                modal.classList.remove('flex');
-                modal.classList.add('hidden');
-                document.getElementById('admin-login-error').classList.add('hidden');
-            }
-
-            async function attemptAdminLogin() {
-                const pw = document.getElementById('admin-password').value;
-                const error = document.getElementById('admin-login-error');
-                error.classList.add('hidden');
-
-                try {
-                    const res = await fetch(`${BACKEND_URL}/api/login`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
-                        body: JSON.stringify({ password: pw })
-                    });
-                    const data = await res.json();
-
-                    if (data.success) {
-                        closeAdminLogin();
-                        // Open the full admin panel in a new tab
-                        window.open(`${BACKEND_URL}/admin`, '_blank');
-                    } else {
-                        error.classList.remove('hidden');
-                    }
-                } catch (e) {
-                    error.textContent = "Backend not reachable. Start it with: python3 backend/server.py";
-                    error.classList.remove('hidden');
-                }
-            }
 
             // Optional: Hydrate the site from backend when available (progressive enhancement)
             async function tryLoadFromBackend() {
