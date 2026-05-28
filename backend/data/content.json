@@ -1,0 +1,362 @@
+{
+  "meta": {
+    "lastUpdated": "2026-05-28T07:03:20.974643Z",
+    "version": 2,
+    "mediaLibraryVersion": 1
+  },
+  "mediaLibrary": {
+    "m_hero_bg": {
+      "id": "m_hero_bg",
+      "filename": "hero-bg.mp4",
+      "type": "video",
+      "url": "/media/hero-bg.mp4",
+      "poster": "images/hero.jpg",
+      "originalName": "hero-bg.mp4",
+      "uploadedAt": "2026-05-28T10:00:00Z"
+    },
+    "m_sarah_grooming": {
+      "id": "m_sarah_grooming",
+      "filename": "sarah-grooming.mp4",
+      "type": "video",
+      "url": "/media/sarah-grooming.mp4",
+      "poster": "images/groomer-sarah.jpg",
+      "originalName": "sarah-grooming.mp4",
+      "uploadedAt": "2026-05-28T10:00:00Z"
+    },
+    "m_happy_dogs": {
+      "id": "m_happy_dogs",
+      "filename": "happy-dogs.mp4",
+      "type": "video",
+      "url": "/media/happy-dogs.mp4",
+      "poster": "images/happy-group.jpg",
+      "originalName": "happy-dogs.mp4",
+      "uploadedAt": "2026-05-28T10:00:00Z"
+    },
+    "m_pawdicure": {
+      "id": "m_pawdicure",
+      "filename": "pawdicure.mp4",
+      "type": "video",
+      "url": "/media/pawdicure.mp4",
+      "poster": "images/pampered-paws.jpg",
+      "originalName": "pawdicure.mp4",
+      "uploadedAt": "2026-05-28T10:00:00Z"
+    },
+    "m_transformation": {
+      "id": "m_transformation",
+      "filename": "grooming-transformation.mp4",
+      "type": "video",
+      "url": "/media/grooming-transformation.mp4",
+      "poster": "images/before-after.jpg",
+      "originalName": "grooming-transformation.mp4",
+      "uploadedAt": "2026-05-28T10:00:00Z"
+    },
+    "m_sarah_portrait": {
+      "id": "m_sarah_portrait",
+      "filename": "groomer-sarah.jpg",
+      "type": "image",
+      "url": "/media/groomer-sarah.jpg",
+      "originalName": "groomer-sarah.jpg",
+      "uploadedAt": "2026-05-28T10:00:00Z"
+    },
+    "m_mike_portrait": {
+      "id": "m_mike_portrait",
+      "filename": "groomer-mike.jpg",
+      "type": "image",
+      "url": "/media/groomer-mike.jpg",
+      "originalName": "groomer-mike.jpg",
+      "uploadedAt": "2026-05-28T10:00:00Z"
+    },
+    "m_elena_portrait": {
+      "id": "m_elena_portrait",
+      "filename": "groomer-elena.jpg",
+      "type": "image",
+      "url": "/media/groomer-elena.jpg",
+      "originalName": "groomer-elena.jpg",
+      "uploadedAt": "2026-05-28T10:00:00Z"
+    },
+    "m_patricia_portrait": {
+      "id": "m_patricia_portrait",
+      "filename": "groomer-patricia.jpg",
+      "type": "image",
+      "url": "/media/groomer-patricia.jpg",
+      "originalName": "groomer-patricia.jpg",
+      "uploadedAt": "2026-05-28T10:00:00Z"
+    }
+  },
+  "settings": {
+    "siteName": "Pawfect Grooming",
+    "phone": "888-888-888",
+    "email": "hello@pawfectgrooming.com",
+    "address": "1248 Pearl Street, Boulder, Colorado 80302",
+    "hours": "Tuesday – Friday: 8:00 AM – 6:00 PM\nSaturday: 8:00 AM – 5:00 PM\nSunday & Monday: Closed",
+    "bookingNotice": "We typically book 1–3 weeks out. Same-week appointments occasionally open up.",
+    "instagramUrl": "https://instagram.com/pawfectgrooming",
+    "facebookUrl": "https://facebook.com/pawfectgrooming",
+    "tiktokUrl": "https://tiktok.com/@pawfectgrooming",
+    "stats": {
+      "years": "12",
+      "pets": "4,800",
+      "reviews": "98%",
+      "groomers": "3"
+    }
+  },
+  "hero": {
+    "badge": "BOULDER'S #1 PET GROOMER 2024",
+    "headline": "Love your pet.<br>Let us pamper them.",
+    "subheadline": "Award-winning grooming studio offering luxurious, stress-free experiences for dogs and cats in Boulder, Colorado.",
+    "backgroundMediaId": "m_hero_bg"
+  },
+  "about": {
+    "eyebrow": "EST. 2012 • BOULDER, COLORADO",
+    "headline": "A sanctuary<br>for the ones<br>you love most.",
+    "paragraph1": "Pawfect Grooming was founded on a simple belief: every pet deserves to be treated like family. Our studio combines old-world craftsmanship with modern care techniques in a calming, spa-like environment.",
+    "paragraph2": "Our team of certified groomers has over 35 years of combined experience. We never rush an appointment and always prioritize your pet's comfort and safety above all else.",
+    "badges": [
+      "Fear-Free Certified",
+      "Pet First Approach"
+    ],
+    "featuredMediaId": "m_sarah_grooming",
+    "founderName": "Sarah Kline, Founder",
+    "founderQuote": "Every pet who walks through our doors leaves happier than they arrived."
+  },
+  "services": [
+    {
+      "active": true,
+      "description": "Complete bath, breed-specific haircut & style, nail trim, ear cleaning, teeth brushing, paw pad conditioning, and finishing touch with our signature cologne.",
+      "duration": "60–90 min",
+      "icon": "spa",
+      "id": 1,
+      "imageMediaId": "m_file_before-after_jpg",
+      "name": "Signature Full Groom",
+      "priceLabel": "FROM $95"
+    },
+    {
+      "active": true,
+      "description": "Luxurious oatmeal or hypoallergenic shampoo bath, blow dry, full brush out, light trim around eyes & paws, nail trim, and ear cleaning.",
+      "duration": "45–60 min",
+      "icon": "shower",
+      "id": 2,
+      "imageMediaId": "m_file_pampered-paws_jpg",
+      "name": "Bath & Brush Out",
+      "priceLabel": "$55"
+    },
+    {
+      "active": true,
+      "description": "Precision haircut tailored to your pet's breed standard or your personal style preference. Includes full bath, blowout, and finishing details.",
+      "duration": "60 min",
+      "icon": "cut",
+      "id": 3,
+      "imageMediaId": "m_file_happy-group_jpg",
+      "name": "Haircut & Styling",
+      "priceLabel": "$75"
+    },
+    {
+      "active": true,
+      "description": "Expert nail trimming, paw pad shaping, soothing paw soak, cuticle care, optional nail polish in 6 beautiful colors, and moisturizing balm.",
+      "duration": "25–35 min",
+      "icon": "hand-sparkles",
+      "id": 4,
+      "imageMediaId": "m_file_hero_jpg",
+      "name": "Pawdicure & Nail Trim",
+      "priceLabel": "$35"
+    },
+    {
+      "active": true,
+      "description": "Professional teeth brushing using enzymatic toothpaste, breath freshening gel, and a gentle gum massage. Add-on available with any service.",
+      "duration": "15 min",
+      "icon": "tooth",
+      "id": 5,
+      "imageMediaId": "m_sarah_portrait",
+      "name": "Dental Care Treatment",
+      "priceLabel": "$28"
+    },
+    {
+      "active": true,
+      "description": "Deep cleansing deshedding bath with Furminator treatment, high-velocity drying, and a special leave-in conditioning treatment that reduces shedding by up to 80%.",
+      "duration": "75 min",
+      "icon": "wind",
+      "id": 6,
+      "imageMediaId": "m_pawdicure",
+      "name": "De-Shedding Spa Treatment",
+      "priceLabel": "$65"
+    }
+  ],
+  "team": [
+    {
+      "active": true,
+      "bio": "Passionate about gentle handling and breed standard perfection. Sarah opened Pawfect after 8 years working in high-volume salons and decided pets deserved better.",
+      "id": 1,
+      "name": "Sarah Kline",
+      "photoMediaId": "m_sarah_portrait",
+      "title": "Founder & Lead Stylist",
+      "years": "12"
+    },
+    {
+      "active": true,
+      "bio": "Known for his calm presence with anxious dogs. Mike specializes in large breeds and creative styling. He also trains new groomers across the Front Range.",
+      "id": 2,
+      "name": "Michael Torres",
+      "photoMediaId": "m_mike_portrait",
+      "title": "Master Groomer",
+      "years": "9"
+    },
+    {
+      "active": true,
+      "bio": "Our resident cat whisperer. Elena has a rare gift for making even the most reluctant cats feel safe and relaxed. She is also a certified cat behaviorist.",
+      "id": 3,
+      "name": "Elena Vargas",
+      "photoMediaId": "m_elena_portrait",
+      "title": "Feline Specialist",
+      "years": "7"
+    },
+    {
+      "active": true,
+      "bio": "The heart of our senior pet program. Patricia brings decades of experience and a gentle touch. She is also trained in canine and feline massage therapy.",
+      "id": 4,
+      "name": "Patricia Hale",
+      "photoMediaId": "m_patricia_portrait",
+      "title": "Senior Groomer & Massage",
+      "years": "14"
+    }
+  ],
+  "gallery": [
+    {
+      "alt": "Adorable Pomeranian with perfect voluminous coat and pink bow after grooming",
+      "caption": "Muffin • Pomeranian",
+      "id": 1,
+      "mediaId": null,
+      "mediaType": "image",
+      "relatedTo": {
+        "label": "Client Showcase",
+        "type": "showcase"
+      },
+      "src": "images/pomeranian.jpg",
+      "type": "dog"
+    },
+    {
+      "alt": "Majestic Afghan Hound with long flowing silky coat after professional grooming",
+      "caption": "Prince • Afghan Hound",
+      "id": 2,
+      "mediaId": null,
+      "mediaType": "image",
+      "relatedTo": {
+        "label": "Client Showcase",
+        "type": "showcase"
+      },
+      "src": "images/afghan.jpg",
+      "type": "dog"
+    },
+    {
+      "alt": "Charming French Bulldog wearing a navy bandana looking happy post grooming",
+      "caption": "Biscuit • French Bulldog",
+      "id": 3,
+      "mediaId": null,
+      "mediaType": "image",
+      "relatedTo": {
+        "label": "Client Showcase",
+        "type": "showcase"
+      },
+      "src": "images/frenchie.jpg",
+      "type": "dog"
+    },
+    {
+      "alt": "Glamorous Persian cat with pristine white fur after a full spa day",
+      "caption": "Clementine • Persian",
+      "id": 4,
+      "mediaId": null,
+      "mediaType": "image",
+      "relatedTo": {
+        "label": "Client Showcase",
+        "type": "showcase"
+      },
+      "src": "images/persian-cat.jpg",
+      "type": "cat"
+    },
+    {
+      "alt": "Three happy dogs playing after their group grooming day",
+      "caption": "The Trio • Post-Spa Day",
+      "id": 5,
+      "mediaId": "m_happy_dogs",
+      "mediaType": "video",
+      "poster": "images/happy-group.jpg",
+      "relatedTo": {
+        "label": "Client Showcase",
+        "type": "showcase"
+      },
+      "src": "videos/happy-dogs.mp4",
+      "type": "dog"
+    },
+    {
+      "alt": "Close-up of beautifully groomed dog paws with soft pink painted nails",
+      "caption": "Pawdicure Details",
+      "id": 6,
+      "mediaId": "m_pawdicure",
+      "mediaType": "video",
+      "poster": "images/pampered-paws.jpg",
+      "relatedTo": {
+        "label": "Client Showcase",
+        "type": "showcase"
+      },
+      "src": "videos/pawdicure.mp4",
+      "type": "dog"
+    },
+    {
+      "alt": "Artistic transformation: scruffy terrier turned into a dapper gentleman",
+      "caption": "Rocky • Complete Transformation",
+      "id": 7,
+      "mediaId": "m_transformation",
+      "mediaType": "video",
+      "poster": "images/before-after.jpg",
+      "relatedTo": {
+        "label": "Client Showcase",
+        "type": "showcase"
+      },
+      "src": "videos/grooming-transformation.mp4",
+      "type": "dog"
+    },
+    {
+      "alt": "Elena with a perfectly groomed Yorkshire Terrier wearing a pink bow",
+      "caption": "Tiny Tim • Yorkshire Terrier",
+      "id": 8,
+      "mediaId": null,
+      "mediaType": "image",
+      "relatedTo": {
+        "id": 3,
+        "label": "Elena Vargas",
+        "type": "team"
+      },
+      "src": "images/groomer-elena.jpg",
+      "type": "dog"
+    }
+  ],
+  "testimonials": [
+    {
+      "author": "The Ramirez Family",
+      "id": 1,
+      "petInfo": "Luna (Pomeranian)",
+      "quote": "Luna comes home looking like a completely different dog — in the best way. The team at Pawfect is incredibly patient with her anxiety. We won't go anywhere else.",
+      "rating": 5
+    },
+    {
+      "author": "David & Priya Chen",
+      "id": 2,
+      "petInfo": "Otis (French Bulldog)",
+      "quote": "I was nervous bringing our new rescue in. Patricia spent extra time with him and even sent photos during the appointment. He looked incredible and actually seemed relaxed.",
+      "rating": 4.5
+    },
+    {
+      "author": "Margaret Holloway",
+      "id": 3,
+      "petInfo": "Clementine (Persian)",
+      "quote": "My Persian cat, Clementine, is a total diva and refuses most groomers. Elena is magic. Clem now gets excited when we pull up to Pawfect. I never thought I'd see that day.",
+      "rating": 5
+    },
+    {
+      "author": "The Whitaker Family",
+      "id": 4,
+      "petInfo": "Finn & Scout (Golden Retrievers)",
+      "quote": "We drive from Denver every 6 weeks for our two Goldens. Worth every mile. The quality is unmatched and the whole experience feels genuinely caring, never transactional.",
+      "rating": 5
+    }
+  ]
+}

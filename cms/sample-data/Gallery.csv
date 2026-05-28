@@ -1,0 +1,9 @@
+id,filename,alt,caption,type,sort_order,active
+1,pomeranian.jpg,"Adorable Pomeranian with perfect voluminous coat and pink bow after grooming","Muffin • Pomeranian",dog,10,TRUE
+2,afghan.jpg,"Majestic Afghan Hound with long flowing silky coat after professional grooming","Prince • Afghan Hound",dog,20,TRUE
+3,frenchie.jpg,"Charming French Bulldog wearing a navy bandana looking happy post grooming","Biscuit • French Bulldog",dog,30,TRUE
+4,persian-cat.jpg,"Glamorous Persian cat with pristine white fur after a full spa day","Clementine • Persian",cat,40,TRUE
+5,happy-group.jpg,"Three happy dogs — doodle, Maltese, and corgi — after their group grooming day","The Trio • Post-Spa Day",dog,50,TRUE
+6,pampered-paws.jpg,"Close-up of beautifully groomed dog paws with soft pink painted nails","Pawdicure Details",dog,60,TRUE
+7,before-after.jpg,"Artistic transformation: scruffy terrier turned into a dapper gentleman","Rocky • Complete Transformation",dog,70,TRUE
+8,groomer-elena.jpg,"Elena with a perfectly groomed Yorkshire Terrier wearing a pink bow","Tiny Tim • Yorkshire Terrier",dog,80,TRUE

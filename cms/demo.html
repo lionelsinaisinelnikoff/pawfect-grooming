@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pawfect Grooming CMS — Live Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="pawfect-cms.js"></script>
+  <style>
+    body { font-family: 'Inter', system_ui, sans-serif; }
+    .heading-serif { font-family: 'Playfair Display', Georgia, serif; font-weight: 700; }
+    .pet-badge { background: linear-gradient(135deg, #A67C6D 0%, #5C7A6E 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  </style>
+</head>
+<body class="bg-[#FDF8F4] text-[#2F3A3A]">
+  <div class="max-w-5xl mx-auto p-8">
+    <div class="flex items-center gap-x-3 mb-3">
+      <div class="w-9 h-9 bg-gradient-to-br from-[#A67C6D] to-[#5C7A6E] rounded-2xl flex items-center justify-center">
+        <i class="fa-solid fa-paw text-white text-2xl"></i>
+      </div>
+      <div>
+        <span class="font-bold text-3xl tracking-tighter heading-serif">Pawfect</span>
+        <span class="text-xs tracking-[2px] text-[#A67C6D] block -mt-1">CMS DEMO</span>
+      </div>
+    </div>
+    
+    <h1 class="text-4xl tracking-tighter heading-serif mb-2">Live CMS Preview</h1>
+    <p class="text-[#2F3A3A]/70 mb-8 max-w-xl">This page fetches real data from your Google Sheets. Replace the URL below, then refresh.</p>
+
+    <!-- Status -->
+    <div id="status-bar" class="mb-8 inline-flex items-center gap-x-2 px-4 py-1.5 bg-white border border-[#EDE4DB] rounded-2xl text-sm">
+      <i class="fa-solid fa-sync fa-spin text-[#A67C6D]"></i>
+      <span>Loading from CMS...</span>
+    </div>
+
+    <!-- Settings Overview -->
+    <div class="mb-10">
+      <h2 class="font-semibold text-xl mb-3 flex items-center gap-x-2">
+        <i class="fa-solid fa-cog text-[#A67C6D]"></i> Settings
+      </h2>
+      <div id="settings-grid" class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm"></div>
+    </div>
+
+    <!-- Services -->
+    <div class="mb-10">
+      <div class="flex items-end justify-between mb-4">
+        <h2 class="font-semibold text-xl">Services <span id="services-count" class="text-sm text-[#A67C6D]"></span></h2>
+      </div>
+      <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </div>
+
+    <!-- Groomers -->
+    <div class="mb-10">
+      <div class="flex items-end justify-between mb-4">
+        <h2 class="font-semibold text-xl">Our Grooming Team <span id="groomers-count" class="text-sm text-[#A67C6D]"></span></h2>
+      </div>
+      <div id="groomers-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+    </div>
+
+    <!-- Gallery -->
+    <div class="mb-10">
+      <div class="flex items-end justify-between mb-4">
+        <h2 class="font-semibold text-xl">Gallery <span id="gallery-count" class="text-sm text-[#A67C6D]"></span></h2>
+        <div class="text-xs text-[#2F3A3A]/60">Dogs &amp; Cats</div>
+      </div>
+      <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
+    </div>
+
+    <!-- Testimonials -->
+    <div>
+      <div class="flex items-end justify-between mb-4">
+        <h2 class="font-semibold text-xl">Testimonials <span id="testimonials-count" class="text-sm text-[#A67C6D]"></span></h2>
+      </div>
+      <div id="testimonials-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </div>
+
+    <div class="mt-12 p-6 bg-white border border-[#EDE4DB] rounded-3xl text-sm">
+      <div class="font-semibold mb-2">Next steps</div>
+      <ol class="list-decimal list-inside space-y-1 text-[#2F3A3A]/80">
+        <li>Deploy your own Apps Script Web App (see cms/README.md)</li>
+        <li>Replace the CMS_URL constant below with your real URL</li>
+        <li>Integrate the dynamic loader into <code>index.html</code> to replace the static sections</li>
+        <li>Edit the Google Sheet — changes appear on the site automatically</li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // IMPORTANT: Replace this with your deployed Web App URL
+    // ============================================
+    const CMS_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID_HERE/exec";
+
+    async function loadCMS() {
+      const status = document.getElementById('status-bar');
+
+      try {
+        const cms = new PawfectCMS(CMS_URL);
+
+        // Load all data in parallel
+        const [settings, services, groomers, gallery, testimonials] = await Promise.all([
+          cms.getSettings(),
+          cms.get("Services", { active: true }),
+          cms.get("Groomers", { active: true }),
+          cms.get("Gallery", { active: true }),
+          cms.get("Testimonials", { active: true })
+        ]);
+
+        status.innerHTML = `<i class="fa-solid fa-check text-emerald-600"></i> <span>Connected to CMS • ${new Date().toLocaleTimeString()}</span>`;
+        status.classList.add('!border-emerald-200');
+
+        // Settings
+        renderSettings(settings);
+
+        // Services
+        document.getElementById('services-count').textContent = `(${services.length})`;
+        renderServices(services);
+
+        // Groomers
+        document.getElementById('groomers-count').textContent = `(${groomers.length})`;
+        renderGroomers(groomers);
+
+        // Gallery
+        document.getElementById('gallery-count').textContent = `(${gallery.length})`;
+        renderGallery(gallery);
+
+        // Testimonials
+        document.getElementById('testimonials-count').textContent = `(${testimonials.length})`;
+        renderTestimonials(testimonials);
+
+      } catch (err) {
+        console.error(err);
+        status.innerHTML = `<i class="fa-solid fa-exclamation-triangle text-red-500"></i> <span>Error loading CMS. Check console + that you replaced the URL.</span>`;
+        status.classList.add('!border-red-200', 'text-red-600');
+      }
+    }
+
+    function renderSettings(s) {
+      const container = document.getElementById('settings-grid');
+      container.innerHTML = '';
+      
+      const interestingKeys = ['phone', 'email', 'address', 'years_experience', 'pets_pampered', 'review_pct'];
+      
+      interestingKeys.forEach(key => {
+        if (!s[key]) return;
+        const div = document.createElement('div');
+        div.className = 'bg-white border border-[#EDE4DB] rounded-2xl p-4';
+        div.innerHTML = `
+          <div class="text-[10px] uppercase tracking-widest text-[#A67C6D]">${key.replace(/_/g, ' ')}</div>
+          <div class="font-semibold mt-1 text-lg">${s[key]}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderServices(services) {
+      const container = document.getElementById('services-grid');
+      container.innerHTML = '';
+
+      services.forEach(svc => {
+        const card = document.createElement('div');
+        card.className = 'bg-white border border-[#EDE4DB] rounded-3xl p-6 flex flex-col';
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div class="w-11 h-11 bg-[#A67C6D]/10 text-[#A67C6D] rounded-2xl flex items-center justify-center">
+              <i class="fa-solid fa-${svc.icon || 'spa'} text-xl"></i>
+            </div>
+            <div class="price-tag px-3 py-0.5 rounded-2xl text-xs font-bold tracking-wider text-[#A67C6D] bg-[#FDF8F4]">${svc.price_label}</div>
+          </div>
+          <div class="mt-5 font-semibold text-xl tracking-tight">${svc.name}</div>
+          <div class="text-xs uppercase text-[#A67C6D] mt-0.5">${svc.duration}</div>
+          <div class="text-sm mt-4 text-[#2F3A3A]/80 leading-relaxed flex-1">${svc.description}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderGroomers(groomers) {
+      const container = document.getElementById('groomers-grid');
+      container.innerHTML = '';
+
+      groomers.forEach(g => {
+        const card = document.createElement('div');
+        card.className = 'bg-white border border-[#EDE4DB] rounded-3xl overflow-hidden';
+        card.innerHTML = `
+          <div class="aspect-square bg-[#EDE4DB] relative">
+            ${g.photo_filename ? `<img src="../${g.photo_filename}" class="w-full h-full object-cover" alt="${g.name}">` : ''}
+            <div class="absolute top-3 right-3 bg-white/90 text-xs font-semibold px-2.5 py-0.5 rounded-2xl shadow">${g.years} yrs</div>
+          </div>
+          <div class="p-5">
+            <div class="font-semibold">${g.name}</div>
+            <div class="text-[#A67C6D] text-sm">${g.title}</div>
+            <p class="text-xs mt-3 text-[#2F3A3A]/75 line-clamp-4">${g.bio}</p>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderGallery(images) {
+      const container = document.getElementById('gallery-grid');
+      container.innerHTML = '';
+
+      images.forEach(img => {
+        const div = document.createElement('div');
+        div.className = 'relative aspect-square rounded-2xl overflow-hidden border border-[#EDE4DB] bg-[#EDE4DB]';
+        div.innerHTML = `
+          <img src="../images/${img.filename}" alt="${img.alt}" class="w-full h-full object-cover">
+          <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-2.5">
+            <div class="text-white text-xs font-medium">${img.caption}</div>
+          </div>
+          <div class="absolute top-2 right-2 text-[9px] px-2 py-px rounded bg-black/60 text-white">${img.type}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderTestimonials(tests) {
+      const container = document.getElementById('testimonials-grid');
+      container.innerHTML = '';
+
+      tests.forEach(t => {
+        const stars = Array.from({ length: 5 }, (_, i) => {
+          const num = parseFloat(t.rating);
+          if (i < Math.floor(num)) return '<i class="fa-solid fa-star"></i>';
+          if (i < num) return '<i class="fa-solid fa-star-half-stroke"></i>';
+          return '<i class="fa-regular fa-star"></i>';
+        }).join('');
+
+        const card = document.createElement('div');
+        card.className = 'bg-white border border-[#EDE4DB] rounded-3xl p-6';
+        card.innerHTML = `
+          <div class="flex gap-x-1 text-[#A67C6D] mb-3">${stars}</div>
+          <p class="text-sm leading-relaxed">"${t.quote}"</p>
+          <div class="mt-5 text-sm">
+            <div class="font-semibold">${t.author}</div>
+            <div class="text-xs text-[#2F3A3A]/60">${t.pet_info}</div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Boot
+    loadCMS();
+  </script>
+</body>
+</html>

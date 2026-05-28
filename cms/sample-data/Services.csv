@@ -1,0 +1,7 @@
+id,name,price_label,duration,description,icon,sort_order,active
+1,Signature Full Groom,FROM $95,60–90 min,"Complete bath, breed-specific haircut & style, nail trim, ear cleaning, teeth brushing, paw pad conditioning, and finishing touch with our signature cologne.",spa,10,TRUE
+2,Bath & Brush Out,$55,45–60 min,"Luxurious oatmeal or hypoallergenic shampoo bath, blow dry, full brush out, light trim around eyes & paws, nail trim, and ear cleaning.",shower,20,TRUE
+3,Haircut & Styling,$75,60 min,"Precision haircut tailored to your pet's breed standard or your personal style preference. Includes full bath, blowout, and finishing details.",cut,30,TRUE
+4,Pawdicure & Nail Trim,$35,25–35 min,"Expert nail trimming, paw pad shaping, soothing paw soak, cuticle care, optional nail polish in 6 beautiful colors, and moisturizing balm.",hand-sparkles,40,TRUE
+5,Dental Care Treatment,$28,15 min,"Professional teeth brushing using enzymatic toothpaste, breath freshening gel, and a gentle gum massage. Add-on available with any service.",tooth,50,TRUE
+6,De-Shedding Spa Treatment,$65,75 min,"Deep cleansing deshedding bath with Furminator treatment, high-velocity drying, and a special leave-in conditioning treatment that reduces shedding by up to 80%.",wind,60,TRUE

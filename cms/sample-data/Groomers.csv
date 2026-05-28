@@ -1,0 +1,5 @@
+id,name,title,bio,years,photo_filename,sort_order,active
+1,Sarah Kline,Founder & Lead Stylist,"Passionate about gentle handling and breed standard perfection. Sarah opened Pawfect after 8 years working in high-volume salons and decided pets deserved better.",12,images/groomer-sarah.jpg,10,TRUE
+2,Michael Torres,Master Groomer,"Known for his calm presence with anxious dogs. Mike specializes in large breeds and creative styling. He also trains new groomers across the Front Range.",9,images/groomer-mike.jpg,20,TRUE
+3,Elena Vargas,Feline Specialist,"Our resident cat whisperer. Elena has a rare gift for making even the most reluctant cats feel safe and relaxed. She is also a certified cat behaviorist.",7,images/groomer-elena.jpg,30,TRUE
+4,Patricia Hale,Senior Groomer & Massage,"The heart of our senior pet program. Patricia brings decades of experience and a gentle touch. She is also trained in canine and feline massage therapy.",14,images/groomer-patricia.jpg,40,TRUE

@@ -7,6 +7,8 @@
     <meta name="description" content="Premium pet grooming in Boulder, Colorado. Luxury grooming experiences for dogs and cats. Call 888-888-888 to book.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Optional CMS client (only used if you enable CMS_CONFIG below) -->
+    <script src="cms/pawfect-cms.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Inter:wght@300;400;500;600&amp;display=swap');
         
@@ -61,13 +63,13 @@
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
         }
 
-        .gallery-img {
+        .gallery-img, .gallery-video {
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
                         box-shadow 0.3s ease;
             cursor: pointer;
         }
         
-        .gallery-img:hover {
+        .gallery-img:hover, .gallery-video:hover {
             transform: scale(1.015);
             box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
         }
@@ -90,10 +92,27 @@
         }
 
         .hero-bg {
+            /* Fallback for no-video browsers */
             background-image: linear-gradient(rgba(47, 58, 58, 0.45), rgba(47, 58, 58, 0.35)), url('images/hero.jpg');
             background-size: cover;
             background-position: center 30%;
             background-repeat: no-repeat;
+        }
+
+        .hero-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(47, 58, 58, 0.42), rgba(47, 58, 58, 0.32));
+            z-index: 2;
         }
 
         .stat-number {
@@ -163,6 +182,15 @@
 
         .testimonial-card {
             transition: transform 0.3s ease;
+        }
+
+        /* Video polish */
+        #lightbox-video {
+            background: #000;
+        }
+        
+        .gallery-video::-webkit-media-controls-start-playback-button {
+            display: none;
         }
     </style>
 </head>
@@ -238,8 +266,15 @@
     </nav>
 
     <!-- HERO -->
-    <header class="hero-bg h-[100dvh] min-h-[680px] flex items-center pt-20 relative">
-        <div class="max-w-5xl mx-auto px-6 relative z-10">
+    <header class="h-[100dvh] min-h-[680px] flex items-center pt-20 relative overflow-hidden bg-[#2F3A3A]">
+        <!-- Video Background -->
+        <video class="hero-video" autoplay muted loop playsinline poster="images/hero.jpg">
+            <source src="videos/hero-bg.mp4" type="video/mp4">
+        </video>
+        <!-- Darkening overlay for text readability -->
+        <div class="hero-overlay"></div>
+        
+        <div class="max-w-5xl mx-auto px-6 relative z-30">
             <div class="max-w-2xl">
                 <div class="inline-flex items-center gap-x-2 px-4 h-9 rounded-3xl bg-white/90 backdrop-blur text-[#A67C6D] text-xs font-semibold tracking-[1.5px] mb-6 shadow-sm">
                     <i class="fa-solid fa-award"></i>
@@ -281,7 +316,7 @@
         </div>
         
         <!-- Scroll indicator -->
-        <div class="hidden md:flex absolute bottom-12 left-1/2 -translate-x-1/2 flex-col items-center gap-y-1.5 text-white/70 text-xs tracking-[2px]">
+        <div class="hidden md:flex absolute bottom-12 left-1/2 -translate-x-1/2 flex-col items-center gap-y-1.5 text-white/70 text-xs tracking-[2px] z-30">
             <span>SCROLL TO BEGIN</span>
             <i class="fa-solid fa-chevron-down animate-bounce"></i>
         </div>
@@ -293,25 +328,25 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-y-6 text-center">
                 <div>
                     <div class="flex items-baseline justify-center gap-x-1">
-                        <span class="font-semibold text-4xl text-[#2F3A3A]">12</span>
+                        <span id="stat-years" class="font-semibold text-4xl text-[#2F3A3A]">12</span>
                     </div>
                     <div class="text-xs uppercase tracking-widest text-[#A67C6D] font-semibold mt-1">YEARS OF EXCELLENCE</div>
                 </div>
                 <div>
                     <div class="flex items-baseline justify-center gap-x-1">
-                        <span class="font-semibold text-4xl text-[#2F3A3A]">4,800</span>
+                        <span id="stat-pets" class="font-semibold text-4xl text-[#2F3A3A]">4,800</span>
                     </div>
                     <div class="text-xs uppercase tracking-widest text-[#A67C6D] font-semibold mt-1">PETS PAMPERED</div>
                 </div>
                 <div>
                     <div class="flex items-baseline justify-center gap-x-1">
-                        <span class="font-semibold text-4xl text-[#2F3A3A]">98%</span>
+                        <span id="stat-reviews" class="font-semibold text-4xl text-[#2F3A3A]">98%</span>
                     </div>
                     <div class="text-xs uppercase tracking-widest text-[#A67C6D] font-semibold mt-1">5-STAR REVIEWS</div>
                 </div>
                 <div>
                     <div class="flex items-baseline justify-center gap-x-1">
-                        <span class="font-semibold text-4xl text-[#2F3A3A]">3</span>
+                        <span id="stat-groomers" class="font-semibold text-4xl text-[#2F3A3A]">3</span>
                     </div>
                     <div class="text-xs uppercase tracking-widest text-[#A67C6D] font-semibold mt-1">CERTIFIED GROOMERS</div>
                 </div>
@@ -351,8 +386,9 @@
             
             <div class="md:col-span-5 mt-10 md:mt-0">
                 <div class="relative rounded-3xl overflow-hidden shadow-2xl luxury-shadow">
-                    <img src="images/groomer-sarah.jpg" alt="Sarah Kline, founder and lead groomer, gently caring for a golden retriever in our sunlit salon" 
-                         class="w-full h-auto object-cover aspect-[4/3]">
+                    <video class="w-full h-auto object-cover aspect-[4/3]" autoplay muted loop playsinline poster="images/groomer-sarah.jpg">
+                        <source src="videos/sarah-grooming.mp4" type="video/mp4">
+                    </video>
                     <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-6 py-6">
                         <div class="text-white">
                             <div class="font-semibold">Sarah Kline, Founder</div>
@@ -375,7 +411,7 @@
                 <p class="max-w-xs mt-4 md:mt-0 text-[#2F3A3A]/70">All services include a complimentary pawdicure touch-up and take-home fragrance spritz.</p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Service 1 -->
                 <div class="service-card group bg-[#FDF8F4] border border-[#EDE4DB] hover:border-[#A67C6D] rounded-3xl p-8 flex flex-col premium-card">
                     <div class="flex justify-between items-start">
@@ -555,7 +591,7 @@
                 <p class="mt-4 max-w-md mx-auto text-[#2F3A3A]/70">Certified professionals who truly love what they do — and love your pets even more.</p>
             </div>
             
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div id="team-grid" class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Sarah -->
                 <div class="team-card bg-[#FDF8F4] border border-[#EDE4DB] rounded-3xl overflow-hidden group">
                     <div class="relative">
@@ -618,7 +654,7 @@
             <h3 class="heading-serif text-6xl tracking-tighter mt-2">Loved by Boulder families</h3>
         </div>
         
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div id="testimonials-grid" class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="testimonial-card bg-white border border-[#EDE4DB] rounded-3xl p-7 luxury-shadow">
                 <div class="flex gap-x-1 text-[#A67C6D] mb-4">
                     <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
@@ -870,6 +906,12 @@
             
             <div>© 2025 Pawfect Grooming Co. All rights reserved. Made with love in Boulder, Colorado.</div>
             <div class="text-xs mt-1 text-[#EDE4DB]/50">Handcrafted grooming for the pets that mean the world to you.</div>
+            <div class="mt-3">
+                <button onclick="openAdminLogin()" 
+                        class="text-[10px] tracking-[1px] text-[#EDE4DB]/40 hover:text-[#A67C6D] transition-colors">
+                    ADMIN LOGIN
+                </button>
+            </div>
         </div>
     </footer>
 
@@ -881,8 +923,9 @@
                 <i class="fa-solid fa-times text-xl"></i>
             </button>
             
-            <div id="lightbox-image-container" class="rounded-3xl overflow-hidden shadow-2xl bg-black">
+            <div id="lightbox-image-container" class="rounded-3xl overflow-hidden shadow-2xl bg-black relative">
                 <img id="lightbox-image" class="w-full h-auto max-h-[82vh] object-contain" alt="Enlarged view of pet">
+                <video id="lightbox-video" class="w-full h-auto max-h-[82vh] object-contain hidden" controls playsinline></video>
             </div>
             
             <div id="lightbox-caption" class="text-center text-white/80 mt-4 text-sm"></div>
@@ -914,6 +957,34 @@
             </button>
             
             <div class="text-xs text-center mt-4 text-[#2F3A3A]/50">We can’t wait to meet your furry family member.</div>
+        </div>
+    </div>
+
+    <!-- ADMIN LOGIN MODAL -->
+    <div id="admin-login-modal" onclick="if (event.target.id === 'admin-login-modal') closeAdminLogin()" class="hidden fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-6">
+        <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-3xl max-w-sm w-full p-8 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <div class="font-semibold text-2xl heading-serif tracking-tight">Admin Access</div>
+                    <div class="text-xs text-[#A67C6D]">Pawfect Grooming CMS</div>
+                </div>
+                <button onclick="closeAdminLogin()" class="text-2xl text-[#2F3A3A]/40 hover:text-[#2F3A3A]">×</button>
+            </div>
+
+            <input id="admin-password" type="password" placeholder="Enter admin password" 
+                   class="w-full border border-[#EDE4DB] bg-[#FDF8F4] rounded-2xl px-5 h-14 text-base focus:border-[#A67C6D] outline-none"
+                   onkeyup="if (event.key === 'Enter') attemptAdminLogin()">
+            
+            <button onclick="attemptAdminLogin()" 
+                    class="mt-4 w-full h-14 bg-[#A67C6D] hover:bg-[#8F685C] active:bg-[#8F685C] text-white font-semibold rounded-2xl">
+                Sign In to Admin Panel
+            </button>
+            
+            <p id="admin-login-error" class="text-red-600 text-xs mt-3 text-center hidden">Invalid password</p>
+            
+            <div class="text-center text-[10px] text-[#2F3A3A]/50 mt-5">
+                Backend must be running: <code class="font-mono">python3 backend/server.py</code>
+            </div>
         </div>
     </div>
 
@@ -970,16 +1041,17 @@
             });
         }
 
-        // Gallery data
-        const galleryImages = [
-            { src: "images/pomeranian.jpg", alt: "Adorable Pomeranian with perfect voluminous coat and pink bow after grooming", type: "dog", caption: "Muffin • Pomeranian" },
-            { src: "images/afghan.jpg", alt: "Majestic Afghan Hound with long flowing silky coat after professional grooming", type: "dog", caption: "Prince • Afghan Hound" },
-            { src: "images/frenchie.jpg", alt: "Charming French Bulldog wearing a navy bandana looking happy post grooming", type: "dog", caption: "Biscuit • French Bulldog" },
-            { src: "images/persian-cat.jpg", alt: "Glamorous Persian cat with pristine white fur after a full spa day", type: "cat", caption: "Clementine • Persian" },
-            { src: "images/happy-group.jpg", alt: "Three happy dogs — doodle, Maltese, and corgi — after their group grooming day", type: "dog", caption: "The Trio • Post-Spa Day" },
-            { src: "images/pampered-paws.jpg", alt: "Close-up of beautifully groomed dog paws with soft pink painted nails", type: "dog", caption: "Pawdicure Details" },
-            { src: "images/before-after.jpg", alt: "Artistic transformation: scruffy terrier turned into a dapper gentleman", type: "dog", caption: "Rocky • Complete Transformation" },
-            { src: "images/groomer-elena.jpg", alt: "Elena with a perfectly groomed Yorkshire Terrier wearing a pink bow", type: "dog", caption: "Tiny Tim • Yorkshire Terrier" }
+        // Gallery data (let so CMS can override at runtime)
+        // Supports both images and videos. Videos use poster for grid/lightbox fallback.
+        let galleryImages = [
+            { src: "images/pomeranian.jpg", alt: "Adorable Pomeranian with perfect voluminous coat and pink bow after grooming", type: "dog", caption: "Muffin • Pomeranian", mediaType: "image" },
+            { src: "images/afghan.jpg", alt: "Majestic Afghan Hound with long flowing silky coat after professional grooming", type: "dog", caption: "Prince • Afghan Hound", mediaType: "image" },
+            { src: "images/frenchie.jpg", alt: "Charming French Bulldog wearing a navy bandana looking happy post grooming", type: "dog", caption: "Biscuit • French Bulldog", mediaType: "image" },
+            { src: "images/persian-cat.jpg", alt: "Glamorous Persian cat with pristine white fur after a full spa day", type: "cat", caption: "Clementine • Persian", mediaType: "image" },
+            { src: "videos/happy-dogs.mp4", alt: "Three happy dogs — doodle, Maltese, and corgi — after their group grooming day", type: "dog", caption: "The Trio • Post-Spa Day", mediaType: "video", poster: "images/happy-group.jpg" },
+            { src: "videos/pawdicure.mp4", alt: "Close-up of beautifully groomed dog paws with soft pink painted nails", type: "dog", caption: "Pawdicure Details", mediaType: "video", poster: "images/pampered-paws.jpg" },
+            { src: "videos/grooming-transformation.mp4", alt: "Artistic transformation: scruffy terrier turned into a dapper gentleman", type: "dog", caption: "Rocky • Complete Transformation", mediaType: "video", poster: "images/before-after.jpg" },
+            { src: "images/groomer-elena.jpg", alt: "Elena with a perfectly groomed Yorkshire Terrier wearing a pink bow", type: "dog", caption: "Tiny Tim • Yorkshire Terrier", mediaType: "image" }
         ];
 
         // Render gallery
@@ -995,16 +1067,30 @@
                 filtered = galleryImages.filter(img => img.type === 'cat');
             }
             
-            filtered.forEach((image, index) => {
+            filtered.forEach((item, index) => {
                 const div = document.createElement('div');
                 div.className = `relative overflow-hidden rounded-2xl group aspect-square bg-[#EDE4DB] shadow-sm`;
                 
+                let mediaHTML = '';
+                if (item.mediaType === 'video') {
+                    mediaHTML = `
+                        <video class="gallery-video w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-500"
+                               autoplay muted loop playsinline 
+                               poster="${item.poster || 'images/happy-group.jpg'}"
+                               onclick="openLightbox(${index}, '${filter}')">
+                            <source src="${item.src}" type="video/mp4">
+                        </video>`;
+                } else {
+                    mediaHTML = `
+                        <img src="${item.src}" alt="${item.alt}" 
+                             class="gallery-img w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-500"
+                             onclick="openLightbox(${index}, '${filter}')">`;
+                }
+                
                 div.innerHTML = `
-                    <img src="${image.src}" alt="${image.alt}" 
-                         class="gallery-img w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-500"
-                         onclick="openLightbox(${index}, '${filter}')">
+                    ${mediaHTML}
                     <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent px-4 py-[17px]">
-                        <div class="text-white text-sm font-medium tracking-tight">${image.caption}</div>
+                        <div class="text-white text-sm font-medium tracking-tight">${item.caption}</div>
                     </div>
                 `;
                 
@@ -1056,17 +1142,44 @@
 
         function showLightboxImage() {
             const img = document.getElementById('lightbox-image');
+            const video = document.getElementById('lightbox-video');
             const caption = document.getElementById('lightbox-caption');
             
-            const imageData = galleryImages[currentLightboxIndex];
+            const item = galleryImages[currentLightboxIndex];
             
-            img.src = imageData.src;
-            img.alt = imageData.alt;
-            caption.innerHTML = `<span class="font-medium">${imageData.caption}</span>`;
+            caption.innerHTML = `<span class="font-medium">${item.caption}</span>`;
+            
+            if (item.mediaType === 'video') {
+                // Show video, hide image
+                img.classList.add('hidden');
+                video.classList.remove('hidden');
+                
+                video.src = item.src;
+                video.poster = item.poster || '';
+                // Autoplay in lightbox with sound available via controls
+                video.play().catch(() => {});
+            } else {
+                // Show image, hide video
+                video.classList.add('hidden');
+                video.pause();
+                video.src = '';
+                img.classList.remove('hidden');
+                
+                img.src = item.src;
+                img.alt = item.alt;
+            }
         }
 
         function closeLightbox() {
             const modal = document.getElementById('lightbox-modal');
+            const video = document.getElementById('lightbox-video');
+            
+            // Stop video if playing
+            if (video) {
+                video.pause();
+                video.src = '';
+            }
+            
             modal.classList.remove('flex');
             modal.classList.add('hidden');
             document.body.style.overflow = '';
@@ -1211,6 +1324,130 @@
             });
         }
 
+        // =============================================
+        // OPTIONAL GOOGLE SHEETS CMS INTEGRATION
+        // Flip CMS_CONFIG.enabled = true after you deploy the Apps Script Web App.
+        // Full setup instructions: cms/README.md
+        // =============================================
+        const CMS_CONFIG = {
+            enabled: false,   // ← change to true to make the site dynamic
+            apiUrl: "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID_HERE/exec"
+        };
+
+        let dynamicContent = null;
+
+        async function loadFromCMS() {
+            if (!CMS_CONFIG.enabled || !window.PawfectCMS) {
+                return;
+            }
+            if (!CMS_CONFIG.apiUrl.includes('script.google.com')) {
+                console.warn('[Pawfect CMS] No valid apiUrl configured.');
+                return;
+            }
+
+            try {
+                const cms = new PawfectCMS(CMS_CONFIG.apiUrl);
+                const data = await cms.getAll();
+                dynamicContent = data;
+
+                console.log('%c[Pawfect Grooming] Dynamic content loaded from Google Sheets CMS', 'color:#5C7A6E');
+
+                applyDynamicStats(data.Settings || {});
+                applyDynamicServices(data.Services || []);
+                applyDynamicGroomers(data.Groomers || []);
+                applyDynamicGallery(data.Gallery || []);
+                applyDynamicTestimonials(data.Testimonials || {});
+                applyDynamicContact(data.Settings || {});
+
+            } catch (err) {
+                console.warn('%c[Pawfect CMS] Failed to load dynamic content. Using static fallback.', 'color:#A67C6D', err);
+            }
+        }
+
+        function applyDynamicStats(settings) {
+            const map = {
+                'stat-years': settings.years_experience,
+                'stat-pets': settings.pets_pampered ? Number(settings.pets_pampered).toLocaleString() : null,
+                'stat-reviews': settings.review_pct ? settings.review_pct + '%' : null,
+                'stat-groomers': settings.groomer_count
+            };
+            Object.keys(map).forEach(id => {
+                const el = document.getElementById(id);
+                if (el && map[id]) el.textContent = map[id];
+            });
+        }
+
+        function applyDynamicServices(services) {
+            if (!services.length) return;
+            const container = document.getElementById('services-grid');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            services.forEach(svc => {
+                const card = document.createElement('div');
+                card.className = 'service-card group bg-[#FDF8F4] border border-[#EDE4DB] hover:border-[#A67C6D] rounded-3xl p-8 flex flex-col premium-card';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="w-12 h-12 bg-[#A67C6D]/10 text-[#A67C6D] rounded-2xl flex items-center justify-center">
+                            <i class="fa-solid fa-${svc.icon || 'spa'} text-2xl"></i>
+                        </div>
+                        <div class="price-tag px-4 py-1 rounded-2xl text-xs font-bold tracking-wider text-[#A67C6D]">${svc.price_label}</div>
+                    </div>
+                    <div class="mt-7">
+                        <div class="font-semibold text-2xl tracking-tight">${svc.name}</div>
+                        <div class="text-sm text-[#2F3A3A]/60 mt-1">${svc.name === 'Signature Full Groom' ? 'Our most popular package' : (svc.name === 'Bath & Brush Out' ? 'Perfect refresh between grooms' : '')}</div>
+                    </div>
+                    <div class="text-[#2F3A3A]/80 text-[15px] mt-4 leading-relaxed flex-1">${svc.description}</div>
+                    <div class="flex items-center justify-between mt-7 pt-6 border-t border-[#EDE4DB]">
+                        <div class="text-xs uppercase font-semibold text-[#A67C6D]">${svc.duration}</div>
+                        <button onclick="selectService('${svc.name.replace(/'/g, "\\'")}')" 
+                                class="text-xs font-semibold px-5 py-2 rounded-2xl bg-[#2F3A3A] hover:bg-black text-white transition">SELECT SERVICE</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function applyDynamicGroomers(groomers) {
+            if (!groomers.length) return;
+            const container = document.getElementById('team-grid');
+            if (!container) return;
+            // For full dynamic, you would clear + rebuild cards here (left as exercise + see cms/demo.html)
+        }
+
+        function applyDynamicGallery(galleryItems) {
+            if (!galleryItems.length) return;
+            // Override the static galleryImages array used by renderGallery()
+            galleryImages = galleryItems.map(item => ({
+                src: `images/${item.filename}`,
+                alt: item.alt || item.caption,
+                type: item.type || 'dog',
+                caption: item.caption
+            }));
+            // Re-render current filter
+            const activeBtn = document.querySelector('.gallery-filter-btn.active');
+            const currentFilter = activeBtn && activeBtn.id === 'filter-cat' ? 'cat' : (activeBtn && activeBtn.id === 'filter-dog' ? 'dog' : 'all');
+            renderGallery(currentFilter);
+        }
+
+        function applyDynamicTestimonials(testimonials) {
+            if (!testimonials.length) return;
+            // Placeholder: full dynamic testimonials rendering can be added following the pattern in cms/demo.html
+        }
+
+        function applyDynamicContact(settings) {
+            // Update phone numbers in navbar / CTAs (simple text replace for demo)
+            if (settings.phone) {
+                document.querySelectorAll('a[href^="tel:"]').forEach(a => {
+                    if (a.textContent.includes('888-888-888') || a.getAttribute('href') === 'tel:888888888') {
+                        a.textContent = a.textContent.replace(/888-888-888/g, settings.phone);
+                        if (a.getAttribute('href') === 'tel:888888888') a.setAttribute('href', 'tel:' + settings.phone.replace(/-/g, ''));
+                    }
+                });
+            }
+        }
+
         // Initialize everything
         function initializeWebsite() {
             initTailwind();
@@ -1254,8 +1491,98 @@
             const allFilter = document.getElementById('filter-all');
             if (allFilter) allFilter.classList.add('active', 'bg-[#A67C6D]', 'text-white');
             
+            // Load dynamic content from CMS if enabled (non-blocking)
+            loadFromCMS().then(() => {
+                console.log('%c[Pawfect Grooming] CMS check complete.', 'color:#888');
+            });
+
             // Done
             console.log('%c[Pawfect Grooming] Static website initialized successfully.', 'color:#A67C6D');
+
+            // =============================================
+            // BACKEND CMS INTEGRATION (optional)
+            // =============================================
+            const BACKEND_URL = "http://localhost:5050";
+
+            function openAdminLogin() {
+                const modal = document.getElementById('admin-login-modal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                setTimeout(() => {
+                    document.getElementById('admin-password').focus();
+                }, 100);
+            }
+
+            function closeAdminLogin() {
+                const modal = document.getElementById('admin-login-modal');
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+                document.getElementById('admin-login-error').classList.add('hidden');
+            }
+
+            async function attemptAdminLogin() {
+                const pw = document.getElementById('admin-password').value;
+                const error = document.getElementById('admin-login-error');
+                error.classList.add('hidden');
+
+                try {
+                    const res = await fetch(`${BACKEND_URL}/api/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ password: pw })
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        closeAdminLogin();
+                        // Open the full admin panel in a new tab
+                        window.open(`${BACKEND_URL}/admin`, '_blank');
+                    } else {
+                        error.classList.remove('hidden');
+                    }
+                } catch (e) {
+                    error.textContent = "Backend not reachable. Start it with: python3 backend/server.py";
+                    error.classList.remove('hidden');
+                }
+            }
+
+            // Optional: Hydrate the site from backend when available (progressive enhancement)
+            async function tryLoadFromBackend() {
+                try {
+                    const res = await fetch(`${BACKEND_URL}/api/content`, { cache: 'no-store' });
+                    if (!res.ok) return;
+
+                    const data = await res.json();
+                    console.log('%c[Pawfect] Loaded live content from backend CMS', 'color:#5C7A6E');
+
+                    // Apply key dynamic pieces (extend as needed)
+                    if (data.settings) {
+                        // Update phone numbers across the site
+                        document.querySelectorAll('a[href^="tel:"]').forEach(a => {
+                            if (a.textContent.includes('888')) {
+                                a.textContent = a.textContent.replace(/888-888-888/g, data.settings.phone);
+                                a.href = `tel:${data.settings.phone.replace(/-/g, '')}`;
+                            }
+                        });
+                        // Trust bar stats
+                        const s = data.settings.stats || {};
+                        if (document.getElementById('stat-years')) document.getElementById('stat-years').textContent = s.years || '12';
+                        if (document.getElementById('stat-pets')) document.getElementById('stat-pets').textContent = s.pets || '4,800';
+                        if (document.getElementById('stat-reviews')) document.getElementById('stat-reviews').textContent = s.reviews || '98%';
+                        if (document.getElementById('stat-groomers')) document.getElementById('stat-groomers').textContent = s.groomers || '3';
+                    }
+
+                    // You can expand this to fully replace services, team, gallery, etc.
+                    // For a complete dynamic experience, use the dedicated /admin panel.
+
+                } catch (e) {
+                    // Silently fail — we are in static mode
+                }
+            }
+
+            // Try loading dynamic content after initial load
+            setTimeout(tryLoadFromBackend, 800);
         }
 
         // Boot the site
