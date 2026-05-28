@@ -1,8 +1,8 @@
 # Pawfect Grooming
 
-A beautiful, premium single-page website for a fictional pet grooming studio in Boulder, Colorado — now with an optional **no-code Google Sheets CMS** to make content fully dynamic.
+A beautiful, premium single-page website for a fictional pet grooming studio in Boulder, Colorado — with a full **self-hosted admin backend** for easy content management.
 
-**Live Demo (static):** [https://lionelsinaisinelnikoff.github.io/pawfect-grooming](https://lionelsinaisinelnikoff.github.io/pawfect-grooming)
+**Live Demo (static site):** [https://lionelsinaisinelnikoff.github.io/pawfect-grooming](https://lionelsinaisinelnikoff.github.io/pawfect-grooming)
 
 ---
 
@@ -16,7 +16,8 @@ A beautiful, premium single-page website for a fictional pet grooming studio in 
 - Fully functional booking form (simulated submission with success modal)
 - Meet the Team section with 4 groomers
 - Customer testimonials
-- **NEW:** Optional Google Sheets CMS — update services, team, gallery & testimonials without touching code
+- **Full self-hosted admin backend** (Flask) — login from the footer to edit content, upload images/videos, and manage services/team/gallery live
+- Legacy optional Google Sheets CMS also included for comparison
 
 ## 🖼️ Images & Videos
 
@@ -34,7 +35,8 @@ A beautiful, premium single-page website for a fictional pet grooming studio in 
 - Pure HTML5 + Tailwind CSS (via CDN)
 - Vanilla JavaScript (no frameworks)
 - Font Awesome icons
-- Static by default — **optional CMS** via Google Sheets + Apps Script (no backend hosting required)
+- Optional self-hosted backend (Python + Flask) with login-protected admin panel for real content management
+- Can also run 100% static (no backend required)
 
 ## 📁 Project Structure
 
@@ -71,7 +73,19 @@ python3 -m http.server 8000
 npx serve .
 ```
 
-## 🔄 Making It Dynamic (Google Sheets CMS)
+## 🔧 Self-Hosted Admin Backend (Recommended for Dynamic Updates)
+
+The project includes a complete local admin system:
+
+- Run `python3 backend/server.py`
+- Click **ADMIN PANEL** in the site footer
+- Edit text, services, team, testimonials, and upload new images/videos
+- All changes saved to `backend/data/content.json`
+- The static site can optionally load live content from the backend when it's running
+
+See `backend/README.md` for full instructions.
+
+## 🔄 Legacy: Google Sheets CMS (Optional)
 
 The site ships static by default for speed, simplicity, and perfect Lighthouse scores. However, a complete **Google Sheets CMS kit** is included in the `cms/` folder.
 
