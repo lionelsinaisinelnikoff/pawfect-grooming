@@ -1,6 +1,6 @@
 {
   "meta": {
-    "lastUpdated": "2026-05-28T07:30:41.922893Z",
+    "lastUpdated": "2026-05-28T20:15:00.000000Z",
     "version": 2,
     "mediaLibraryVersion": 1
   },
@@ -126,7 +126,7 @@
       "duration": "60–90 min",
       "icon": "spa",
       "id": 1,
-      "imageMediaId": "m_file_before-after_jpg",
+      "imageMediaId": "m_transformation",
       "name": "Signature Full Groom",
       "priceLabel": "FROM $95",
       "priceCents": 12500
@@ -137,7 +137,7 @@
       "duration": "45–60 min",
       "icon": "shower",
       "id": 2,
-      "imageMediaId": "m_file_pampered-paws_jpg",
+      "imageMediaId": "m_happy_dogs",
       "name": "Bath & Brush Out",
       "priceLabel": "$55",
       "priceCents": 5500
@@ -148,7 +148,7 @@
       "duration": "60 min",
       "icon": "cut",
       "id": 3,
-      "imageMediaId": "m_file_happy-group_jpg",
+      "imageMediaId": "m_sarah_grooming",
       "name": "Haircut & Styling",
       "priceLabel": "$75",
       "priceCents": 7500
@@ -159,7 +159,7 @@
       "duration": "25–35 min",
       "icon": "hand-sparkles",
       "id": 4,
-      "imageMediaId": "m_file_hero_jpg",
+      "imageMediaId": "m_pawdicure",
       "name": "Pawdicure & Nail Trim",
       "priceLabel": "$35",
       "priceCents": 3500
@@ -170,7 +170,7 @@
       "duration": "15 min",
       "icon": "tooth",
       "id": 5,
-      "imageMediaId": "m_sarah_portrait",
+      "imageMediaId": "m_sarah_grooming",
       "name": "Dental Care Treatment",
       "priceLabel": "$28",
       "priceCents": 2800
@@ -181,7 +181,7 @@
       "duration": "75 min",
       "icon": "wind",
       "id": 6,
-      "imageMediaId": "m_pawdicure",
+      "imageMediaId": "m_happy_dogs",
       "name": "De-Shedding Spa Treatment",
       "priceLabel": "$65",
       "priceCents": 6500

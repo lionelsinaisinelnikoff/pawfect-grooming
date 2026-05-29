@@ -897,16 +897,20 @@ ADMIN_HTML = """<!DOCTYPE html>
             currentContent.services.forEach((svc, idx) => {
                 const mediaId = svc.imageMediaId;
                 const media = mediaId ? currentMediaLibrary[mediaId] : null;
-                const imgUrl = media ? media.url : 'https://placehold.co/96x72?text=No+Image';
+                const mediaUrl = media ? media.url : 'https://placehold.co/96x72?text=No+Image';
+                const isVideo = media && media.type === 'video';
 
                 const div = document.createElement('div');
                 div.className = 'border border-[#EDE4DB] rounded-2xl p-4 flex gap-4 items-start';
                 div.innerHTML = `
                     <div class="w-28 flex-shrink-0">
-                        <img src="${imgUrl}" class="w-24 h-20 object-cover rounded-xl border border-[#EDE4DB]">
+                        ${isVideo 
+                            ? `<video src="${mediaUrl}" poster="${media.poster || ''}" class="w-24 h-20 object-cover rounded-xl border border-[#EDE4DB]" muted loop playsinline></video>` 
+                            : `<img src="${mediaUrl}" class="w-24 h-20 object-cover rounded-xl border border-[#EDE4DB]">`
+                        }
                         <button class="mt-2 text-xs w-full py-1 bg-[#A67C6D] text-white rounded-xl hover:bg-[#8F685C]" 
                                 data-action="change-service-image" data-index="${idx}">
-                            Change Image
+                            Change Media
                         </button>
                     </div>
                     <div class="flex-1 min-w-0">

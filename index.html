@@ -1417,6 +1417,13 @@
                         </div>
                         <div class="price-tag px-4 py-1 rounded-2xl text-xs font-bold tracking-wider text-[#A67C6D]">${svc.price_label}</div>
                     </div>
+                    ${svc.image_url ? `
+                    <div class="mt-5 -mx-1 rounded-2xl overflow-hidden border border-[#EDE4DB]">
+                        ${svc.image_url.endsWith('.mp4') || svc.media_type === 'video'
+                            ? `<video src="${svc.image_url}" poster="${svc.poster || ''}" class="w-full aspect-[16/9] object-cover" muted loop playsinline></video>`
+                            : `<img src="${svc.image_url}" class="w-full aspect-[16/9] object-cover">`
+                        }
+                    </div>` : ''}
                     <div class="mt-7">
                         <div class="font-semibold text-2xl tracking-tight">${svc.name}</div>
                         <div class="text-sm text-[#2F3A3A]/60 mt-1">${svc.name === 'Signature Full Groom' ? 'Our most popular package' : (svc.name === 'Bath & Brush Out' ? 'Perfect refresh between grooms' : '')}</div>
